@@ -16,6 +16,47 @@ import {
    ViroPortalScene,
    Viro3DObject,
 } from 'react-viro';
+const mazeGenerator = arr => {
+   const render = [];
+   let initialX = -1;
+   let initialZ = -1;
+   for (let i = arr.length - 1; i >= 0; i--) {
+      for (let j = 0; j < arr[0].length; j++) {
+         initialX++;
+         let position = [initialX, 0, initialZ];
+         if (arr[i][j] === 1) {
+            render.push(
+               <Viro3DObject
+                  source={require('../../object_cube/object_cube.vrx')}
+                  resources={[
+                     require('../../object_cube/cube_diffuse.png'),
+                     require('../../object_cube/cube_specular.png'),
+                  ]}
+                  scale={[1.0, 1.0, 1.0]}
+                  position={position}
+                  type="VRX"
+               />,
+            );
+         } else if (arr[i][j] === 2) {
+            render.push(
+               <ViroPortal position={position} scale={[1, 1, 1]}>
+                  <Viro3DObject
+                     source={require('./portal_res/portal_archway/portal_archway.vrx')}
+                     resources={[
+                        require('./portal_res/portal_archway/portal_archway_diffuse.png'),
+                        require('./portal_res/portal_archway/portal_archway_normal.png'),
+                        require('./portal_res/portal_archway/portal_archway_specular.png'),
+                     ]}
+                     type="VRX"
+                  />
+               </ViroPortal>,
+            );
+         }
+      }
+      initialX = -1;
+      initialZ--;
+   }
+};
 
 var createReactClass = require('create-react-class');
 var MainScene = createReactClass({

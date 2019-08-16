@@ -16,6 +16,7 @@ import {
    PixelRatio,
    TouchableHighlight,
 } from 'react-native';
+import { apiKey } from './secrets.js';
 
 import { ViroVRSceneNavigator, ViroARSceneNavigator } from 'react-viro';
 
@@ -23,7 +24,7 @@ import { ViroVRSceneNavigator, ViroARSceneNavigator } from 'react-viro';
  TODO: Insert your API key below
  */
 var sharedProps = {
-   apiKey: '6EAFE69C-01DB-4933-99FC-3770835E8145',
+   apiKey,
 };
 
 // Sets the default scene you want for AR and VR

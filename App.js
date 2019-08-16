@@ -29,7 +29,6 @@ var sharedProps = {
 
 // Sets the default scene you want for AR and VR
 var InitialARScene = require('./js/ARPortals/MainScene.js');
-var InitialVRScene = require('./js/HelloWorldScene');
 
 var UNSET = 'UNSET';
 var VR_NAVIGATOR_TYPE = 'VR';
@@ -73,16 +72,14 @@ export default class ViroSample extends Component {
       return (
          <View style={localStyles.outer}>
             <View style={localStyles.inner}>
-               <Text style={localStyles.titleText}>
-                  Choose your desired experience:
-               </Text>
+               <Text style={localStyles.titleText}>A Maze Thing</Text>
 
                <TouchableHighlight
                   style={localStyles.buttons}
                   onPress={this._getExperienceButtonOnPress(AR_NAVIGATOR_TYPE)}
                   underlayColor={'#68a0ff'}
                >
-                  <Text style={localStyles.buttonText}>AR</Text>
+                  <Text style={localStyles.buttonText}>Load Random Maze</Text>
                </TouchableHighlight>
 
                <TouchableHighlight
@@ -90,7 +87,7 @@ export default class ViroSample extends Component {
                   onPress={this._getExperienceButtonOnPress(VR_NAVIGATOR_TYPE)}
                   underlayColor={'#68a0ff'}
                >
-                  <Text style={localStyles.buttonText}>VR</Text>
+                  <Text style={localStyles.buttonText}>Create a Maze</Text>
                </TouchableHighlight>
             </View>
          </View>
@@ -110,11 +107,9 @@ export default class ViroSample extends Component {
    // Returns the ViroSceneNavigator which will start the VR experience
    _getVRNavigator() {
       return (
-         <ViroVRSceneNavigator
-            {...this.state.sharedProps}
-            initialScene={{ scene: InitialVRScene }}
-            onExitViro={this._exitViro}
-         />
+         <View>
+            <Text>This Works</Text>
+         </View>
       );
    }
 

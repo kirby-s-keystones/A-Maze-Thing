@@ -17,6 +17,61 @@ import {
    Viro3DObject,
 } from 'react-viro';
 
+const mazeGenerator = arr => {
+   const render = [];
+   let initialX = -1;
+   let initialZ = -1;
+   for (let i = arr.length - 1; i >= 0; i--) {
+      for (let j = 0; j < arr[0].length; j++) {
+         initialX += 1;
+         let position = [initialX, 0, initialZ];
+         if (arr[i][j] === 1) {
+            render.push(
+               <Viro3DObject
+                  source={require('../../object_cube/object_cube.vrx')}
+                  resources={[
+                     require('../../object_cube/cube_diffuse.png'),
+                     require('../../object_cube/cube_specular.png'),
+                  ]}
+                  scale={[1.0, 1.0, 1.0]}
+                  position={position}
+                  type="VRX"
+                  key={String.fromCharCode(i) + String.fromCharCode(j)}
+               />,
+            );
+         } else if (arr[i][j] === 2) {
+            render.push(
+               <ViroPortalScene
+                  passable={true}
+                  dragType="FixedDistance"
+                  onDrag={() => {}}
+                  key={String.fromCharCode(i) + String.fromCharCode(j)}
+               >
+                  <ViroPortal position={position} scale={[0.8, 0.8, 0.8]}>
+                     <Viro3DObject
+                        source={require('./portal_res/portal_archway/portal_archway.vrx')}
+                        resources={[
+                           require('./portal_res/portal_archway/portal_archway_diffuse.png'),
+                           require('./portal_res/portal_archway/portal_archway_normal.png'),
+                           require('./portal_res/portal_archway/portal_archway_specular.png'),
+                        ]}
+                        type="VRX"
+                     />
+                  </ViroPortal>
+                  <Viro360Image
+                     source={require('./portal_res/360_tiles.jpg')}
+                  />
+               </ViroPortalScene>,
+            );
+         }
+      }
+      initialX = -1;
+      initialZ++;
+      console.log(initialX, initialZ);
+   }
+   return render;
+};
+
 var createReactClass = require('create-react-class');
 var MainScene = createReactClass({
    render: function() {
@@ -28,7 +83,7 @@ var MainScene = createReactClass({
                dragType="FixedDistance"
                onDrag={() => {}}
             >
-               <ViroPortal position={[0, 0, -1]} scale={[0.3, 0.3, 0.3]}>
+               <ViroPortal position={[4, 0, -1]} scale={[0.8, 0.8, 0.8]}>
                   <Viro3DObject
                      source={require('./portal_res/portal_archway/portal_archway.vrx')}
                      resources={[
@@ -40,216 +95,17 @@ var MainScene = createReactClass({
                   />
                </ViroPortal>
                <Viro360Image source={require('./portal_res/360_tiles.jpg')} />
-               <Viro3DObject
-                  source={require('../../object_cube/object_cube.vrx')}
-                  resources={[
-                     require('../../object_cube/cube_diffuse.png'),
-                     require('../../object_cube/cube_specular.png'),
-                  ]}
-                  scale={[1.0, 1.0, 1.0]}
-                  position={[-1.15, 0, -1]}
-                  type="VRX"
-               />
-               <Viro3DObject
-                  source={require('../../object_cube/object_cube.vrx')}
-                  resources={[
-                     require('../../object_cube/cube_diffuse.png'),
-                     require('../../object_cube/cube_specular.png'),
-                  ]}
-                  scale={[1.0, 1.0, 1.0]}
-                  position={[-2.15, 0, -1]}
-                  type="VRX"
-               />
-               <Viro3DObject
-                  source={require('../../object_cube/object_cube.vrx')}
-                  resources={[
-                     require('../../object_cube/cube_diffuse.png'),
-                     require('../../object_cube/cube_specular.png'),
-                  ]}
-                  scale={[1.0, 1.0, 1.0]}
-                  position={[-2.15, 0, -2]}
-                  type="VRX"
-               />
-               <Viro3DObject
-                  source={require('../../object_cube/object_cube.vrx')}
-                  resources={[
-                     require('../../object_cube/cube_diffuse.png'),
-                     require('../../object_cube/cube_specular.png'),
-                  ]}
-                  scale={[1.0, 1.0, 1.0]}
-                  position={[-2.15, 0, -3]}
-                  type="VRX"
-               />
-               <Viro3DObject
-                  source={require('../../object_cube/object_cube.vrx')}
-                  resources={[
-                     require('../../object_cube/cube_diffuse.png'),
-                     require('../../object_cube/cube_specular.png'),
-                  ]}
-                  scale={[1.0, 1.0, 1.0]}
-                  position={[-2.15, 0, -4]}
-                  type="VRX"
-               />
-               <Viro3DObject
-                  source={require('../../object_cube/object_cube.vrx')}
-                  resources={[
-                     require('../../object_cube/cube_diffuse.png'),
-                     require('../../object_cube/cube_specular.png'),
-                  ]}
-                  scale={[1.0, 1.0, 1.0]}
-                  position={[-2.15, 0, -5]}
-                  type="VRX"
-               />
-               <Viro3DObject
-                  source={require('../../object_cube/object_cube.vrx')}
-                  resources={[
-                     require('../../object_cube/cube_diffuse.png'),
-                     require('../../object_cube/cube_specular.png'),
-                  ]}
-                  scale={[1.0, 1.0, 1.0]}
-                  position={[-2.15, 0, -6]}
-                  type="VRX"
-               />
-               <Viro3DObject
-                  source={require('../../object_cube/object_cube.vrx')}
-                  resources={[
-                     require('../../object_cube/cube_diffuse.png'),
-                     require('../../object_cube/cube_specular.png'),
-                  ]}
-                  scale={[1.0, 1.0, 1.0]}
-                  position={[-1.15, 0, -6]}
-                  type="VRX"
-               />
-
-               <Viro3DObject
-                  source={require('../../object_cube/object_cube.vrx')}
-                  resources={[
-                     require('../../object_cube/cube_diffuse.png'),
-                     require('../../object_cube/cube_specular.png'),
-                  ]}
-                  scale={[1.0, 1.0, 1.0]}
-                  position={[-0.15, 0, -6]}
-                  type="VRX"
-               />
-               <Viro3DObject
-                  source={require('../../object_cube/object_cube.vrx')}
-                  resources={[
-                     require('../../object_cube/cube_diffuse.png'),
-                     require('../../object_cube/cube_specular.png'),
-                  ]}
-                  scale={[1.0, 1.0, 1.0]}
-                  position={[1.15, 0, -6]}
-                  type="VRX"
-               />
-               <Viro3DObject
-                  source={require('../../object_cube/object_cube.vrx')}
-                  resources={[
-                     require('../../object_cube/cube_diffuse.png'),
-                     require('../../object_cube/cube_specular.png'),
-                  ]}
-                  scale={[1.0, 1.0, 1.0]}
-                  position={[2.15, 0, -6]}
-                  type="VRX"
-               />
-               <Viro3DObject
-                  source={require('../../object_cube/object_cube.vrx')}
-                  resources={[
-                     require('../../object_cube/cube_diffuse.png'),
-                     require('../../object_cube/cube_specular.png'),
-                  ]}
-                  scale={[1.0, 1.0, 1.0]}
-                  position={[2.15, 0, -5]}
-                  type="VRX"
-               />
-               <Viro3DObject
-                  source={require('../../object_cube/object_cube.vrx')}
-                  resources={[
-                     require('../../object_cube/cube_diffuse.png'),
-                     require('../../object_cube/cube_specular.png'),
-                  ]}
-                  scale={[1.0, 1.0, 1.0]}
-                  position={[2.15, 0, -4]}
-                  type="VRX"
-               />
-               <Viro3DObject
-                  source={require('../../object_cube/object_cube.vrx')}
-                  resources={[
-                     require('../../object_cube/cube_diffuse.png'),
-                     require('../../object_cube/cube_specular.png'),
-                  ]}
-                  scale={[1.0, 1.0, 1.0]}
-                  position={[2.15, 0, -3]}
-                  type="VRX"
-               />
-               <Viro3DObject
-                  source={require('../../object_cube/object_cube.vrx')}
-                  resources={[
-                     require('../../object_cube/cube_diffuse.png'),
-                     require('../../object_cube/cube_specular.png'),
-                  ]}
-                  scale={[1.0, 1.0, 1.0]}
-                  position={[2.15, 0, -2]}
-                  type="VRX"
-               />
-               <Viro3DObject
-                  source={require('../../object_cube/object_cube.vrx')}
-                  resources={[
-                     require('../../object_cube/cube_diffuse.png'),
-                     require('../../object_cube/cube_specular.png'),
-                  ]}
-                  scale={[1.0, 1.0, 1.0]}
-                  position={[2.15, 0, -5]}
-                  type="VRX"
-               />
-               <ViroPortalScene
-                  passable={true}
-                  dragType="FixedDistance"
-                  onDrag={() => {}}
-               >
-                  <ViroPortal position={[0, 0, -6]} scale={[0.3, 0.3, 0.3]}>
-                     <Viro3DObject
-                        source={require('./portal_res/portal_archway/portal_archway.vrx')}
-                        resources={[
-                           require('./portal_res/portal_archway/portal_archway_diffuse.png'),
-                           require('./portal_res/portal_archway/portal_archway_normal.png'),
-                           require('./portal_res/portal_archway/portal_archway_specular.png'),
-                        ]}
-                        type="VRX"
-                        scale={[0.3, 0.3, 0.3]}
-                     />
-                  </ViroPortal>
-               </ViroPortalScene>
-
-               <Viro3DObject
-                  source={require('../../object_cube/object_cube.vrx')}
-                  resources={[
-                     require('../../object_cube/cube_diffuse.png'),
-                     require('../../object_cube/cube_specular.png'),
-                  ]}
-                  scale={[1.0, 1.0, 1.0]}
-                  position={[1.15, 0, -1]}
-                  type="VRX"
-               />
-               <Viro3DObject
-                  source={require('../../object_cube/object_cube.vrx')}
-                  resources={[
-                     require('../../object_cube/cube_diffuse.png'),
-                     require('../../object_cube/cube_specular.png'),
-                  ]}
-                  scale={[1.0, 1.0, 1.0]}
-                  position={[2.15, 0, -1]}
-                  type="VRX"
-               />
-               <Viro3DObject
-                  source={require('../../object_cube/object_cube.vrx')}
-                  resources={[
-                     require('../../object_cube/cube_diffuse.png'),
-                     require('../../object_cube/cube_specular.png'),
-                  ]}
-                  scale={[1.0, 1.0, 1.0]}
-                  position={[-1.15, 0, -4]}
-                  type="VRX"
-               />
+               {mazeGenerator([
+                  [1, 1, 2, 1, 1, 1, 1, 1],
+                  [1, 0, 0, 0, 0, 0, 0, 1],
+                  [1, 0, 1, 1, 1, 1, 0, 1],
+                  [1, 0, 0, 0, 0, 1, 0, 1],
+                  [1, 1, 1, 1, 1, 1, 0, 1],
+                  [1, 0, 0, 0, 0, 0, 0, 1],
+                  [1, 0, 0, 0, 1, 1, 0, 1],
+                  [1, 0, 1, 0, 0, 1, 0, 1],
+                  [1, 1, 1, 1, 0, 1, 1, 1],
+               ])}
             </ViroPortalScene>
          </ViroARScene>
       );

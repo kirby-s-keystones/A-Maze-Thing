@@ -99,7 +99,7 @@ const maze = randomMaze();
 export default class MainScene extends Component {
    constructor(props) {
       super(props);
-      this.state = { time: 10 };
+      this.state = { time: 35 };
       this.interval = null;
    }
    componentWillUnmount() {
@@ -130,6 +130,22 @@ export default class MainScene extends Component {
    render() {
       if (this.state.time <= 0) {
          this.stopTimer();
+         return (
+            <ViroARScene>
+               <Viro360Image source={require('../../360_space.jpg')} />
+               <ViroText
+                  fontSize={100}
+                  style={styles.boldFont}
+                  position={[0, 1, -4]}
+                  width={200}
+                  height={5}
+                  extrusionDepth={8}
+                  materials={['frontMaterial', 'backMaterial', 'sideMaterial']}
+                  text={'You Lose!'}
+                  onTap={this.handleTap}
+               />
+            </ViroARScene>
+         );
       }
       return (
          <ViroARScene>

@@ -4,7 +4,7 @@ AR maze
 
 MVP
 
--  We are trialling Swift for 2 days (may switch to React Native).
+-  
 
 Tier 1
 
@@ -25,6 +25,11 @@ Tier 3
 
 Tier 4
 
+-  Mazes in different physical locations (i.e. Central Park)
+- Image recognition of NYC park logo opens a maze portal
+- Map of maze loacations
+- User geolocation
+
+If we have time:
 -  User created mazes: Maze Maker
 -  Users can share and save mazes
--  Mazes in different physical locations (i.e. Central Park)

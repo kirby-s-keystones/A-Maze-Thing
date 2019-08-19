@@ -19,6 +19,7 @@ import {
    ViroAnimations,
    ViroText,
    ViroMaterials,
+   ViroButton,
 } from 'react-viro';
 
 import randomMaze from './mazes';
@@ -50,7 +51,7 @@ const mazeGenerator = arr => {
                <ViroPortalScene
                   passable={true}
                   dragType="FixedDistance"
-                  onDrag={() => {}}
+                  onDrag={() => { }}
                   key={String.fromCharCode(i) + String.fromCharCode(j)}
                >
                   <ViroPortal position={position} scale={[0.8, 0.8, 0.8]}>
@@ -126,6 +127,9 @@ export default class MainScene extends Component {
       clearInterval(this.interval);
       this.interval = null;
    };
+   _onButtonTap = () => {
+      this.props.returnHome();
+   }
 
    render() {
       if (this.state.time <= 0) {
@@ -144,6 +148,15 @@ export default class MainScene extends Component {
                   text={'You Lose!'}
                   onTap={this.handleTap}
                />
+
+               <ViroButton
+                  source={require("../../buttons/btn_black.png")}
+                  tapSource={require("../../buttons/btn_white.png")}
+                  position={[1, 3, -5]}
+                  height={2}
+                  width={3}
+                  onTap={this._onButtonTap} />
+
             </ViroARScene>
          );
       }
@@ -153,7 +166,7 @@ export default class MainScene extends Component {
             <ViroPortalScene
                passable={true}
                dragType="FixedDistance"
-               onDrag={() => {}}
+               onDrag={() => { }}
             >
                <ViroPortal position={[0, 0, -2]} scale={[0.8, 0.8, 0.8]}>
                   <Viro3DObject

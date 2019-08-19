@@ -19,7 +19,6 @@ import {
 import { apiKey } from './secrets.js';
 
 import { ViroVRSceneNavigator, ViroARSceneNavigator } from 'react-viro';
-import Timer from './js/Timer';
 
 /*
  TODO: Insert your API key below
@@ -56,6 +55,11 @@ export default class ViroSample extends Component {
       this._exitViro = this._exitViro.bind(this);
    }
 
+   returnHome = () => {
+      this.setState({
+         navigatorType: UNSET,
+      })
+   }
    // Replace this function with the contents of _getVRNavigator() or _getARNavigator()
    // if you are building a specific type of experience.
    render() {
@@ -101,6 +105,9 @@ export default class ViroSample extends Component {
          <ViroARSceneNavigator
             {...this.state.sharedProps}
             initialScene={{ scene: InitialARScene }}
+            returnHome={
+               this.returnHome
+            }
          />
       );
    }

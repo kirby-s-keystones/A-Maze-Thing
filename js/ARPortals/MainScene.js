@@ -1,6 +1,7 @@
 'use strict';
 
 import React, { Component } from 'react';
+import Timer from '../Timer';
 
 import { StyleSheet } from 'react-native';
 
@@ -16,6 +17,8 @@ import {
    ViroPortalScene,
    Viro3DObject,
    ViroAnimations,
+   ViroText,
+   ViroMaterials,
 } from 'react-viro';
 
 import randomMaze from './mazes';
@@ -91,10 +94,59 @@ const mazeGenerator = arr => {
    }
    return render;
 };
+const maze = randomMaze();
 
-var createReactClass = require('create-react-class');
-var MainScene = createReactClass({
-   render: function() {
+export default class MainScene extends Component {
+   constructor(props) {
+      super(props);
+      this.state = { time: 35 };
+      this.interval = null;
+   }
+   componentWillUnmount() {
+      this.stopTimer();
+   }
+   componentDidMount() {
+      if (!this.interval && this.state.time > 0) {
+         this.startTimer();
+      } else {
+         this.stopTimer();
+      }
+   }
+   startTimer = () => {
+      if (!this.interval && this.state.time > 0) {
+         this.interval = setInterval(
+            () => this.setState({ time: this.state.time - 1 }),
+            1000,
+         );
+      } else {
+         this.stopTimer();
+      }
+   };
+   stopTimer = () => {
+      clearInterval(this.interval);
+      this.interval = null;
+   };
+
+   render() {
+      if (this.state.time <= 0) {
+         this.stopTimer();
+         return (
+            <ViroARScene>
+               <Viro360Image source={require('../../360_space.jpg')} />
+               <ViroText
+                  fontSize={100}
+                  style={styles.boldFont}
+                  position={[0, 1, -4]}
+                  width={200}
+                  height={5}
+                  extrusionDepth={8}
+                  materials={['frontMaterial', 'backMaterial', 'sideMaterial']}
+                  text={'You Lose!'}
+                  onTap={this.handleTap}
+               />
+            </ViroARScene>
+         );
+      }
       return (
          <ViroARScene>
             <ViroAmbientLight color="#ffffff" intensity={200} />
@@ -115,13 +167,47 @@ var MainScene = createReactClass({
                   />
                </ViroPortal>
                <Viro360Image source={require('./portal_res/360_tiles.jpg')} />
-               {mazeGenerator(randomMaze())}
+               <ViroText
+                  fontSize={100}
+                  style={styles.boldFont}
+                  position={[0, 1.5, -4]}
+                  width={200}
+                  height={5}
+                  extrusionDepth={8}
+                  materials={['frontMaterial', 'backMaterial', 'sideMaterial']}
+                  text={String(this.state.time)}
+                  onTap={this.handleTap}
+               />
+               {mazeGenerator(maze)}
             </ViroPortalScene>
          </ViroARScene>
       );
+   }
+}
+
+// Outside render function
+
+var styles = StyleSheet.create({
+   boldFont: {
+      color: '#FFFFFF',
+      flex: 1,
+      textAlignVertical: 'center',
+      textAlign: 'center',
+      fontWeight: 'bold',
    },
 });
 
+ViroMaterials.createMaterials({
+   frontMaterial: {
+      diffuseColor: '#FFFFFF',
+   },
+   backMaterial: {
+      diffuseColor: '#FF0000',
+   },
+   sideMaterial: {
+      diffuseColor: '#0000FF',
+   },
+});
 ViroAnimations.registerAnimations({
    animateCoin: {
       properties: { rotateX: '+=360' },

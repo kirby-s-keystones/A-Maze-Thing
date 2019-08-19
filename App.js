@@ -19,6 +19,7 @@ import {
 import { apiKey } from './secrets.js';
 
 import { ViroVRSceneNavigator, ViroARSceneNavigator } from 'react-viro';
+import Timer from './js/Timer';
 
 /*
  TODO: Insert your API key below

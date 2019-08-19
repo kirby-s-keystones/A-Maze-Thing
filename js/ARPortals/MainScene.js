@@ -91,7 +91,7 @@ export default class MainScene extends Component {
     this.setState({
       cameraPos,
     });
-    this._collisionTest(cameraPos);
+    //  this._collisionTest(cameraPos);
   };
 
   //   _collisionTest = cameraPos => {

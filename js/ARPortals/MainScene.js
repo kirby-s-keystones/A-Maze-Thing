@@ -15,12 +15,15 @@ import {
    ViroPortal,
    ViroPortalScene,
    Viro3DObject,
+   ViroAnimations,
 } from 'react-viro';
+
+import randomMaze from './mazes';
 
 const mazeGenerator = arr => {
    const render = [];
-   let initialX = -1;
-   let initialZ = -1;
+   let initialX = -5;
+   let initialZ = -2;
    for (let i = arr.length - 1; i >= 0; i--) {
       for (let j = 0; j < arr[0].length; j++) {
          initialX += 1;
@@ -63,11 +66,28 @@ const mazeGenerator = arr => {
                   />
                </ViroPortalScene>,
             );
+         } else if (arr[i][j] === 3) {
+            render.push(
+               <Viro3DObject
+                  source={require('../../coin/coin.vrx')}
+                  resources={[
+                     require('../../coin/coin-texture.jpg'),
+                     require('../../coin/img1.png'),
+                     require('../../coin/img2.png'),
+                     require('../../coin/img3.png'),
+                     require('../../coin/gold.jpg'),
+                  ]}
+                  scale={[0.18, 0.18, 0.18]}
+                  position={position}
+                  type="VRX"
+                  key={String.fromCharCode(i) + String.fromCharCode(j)}
+                  animation={{ name: 'animateCoin', run: true, loop: true }}
+               />,
+            );
          }
       }
-      initialX = -1;
-      initialZ++;
-      console.log(initialX, initialZ);
+      initialX = -5;
+      initialZ--;
    }
    return render;
 };
@@ -83,7 +103,7 @@ var MainScene = createReactClass({
                dragType="FixedDistance"
                onDrag={() => {}}
             >
-               <ViroPortal position={[4, 0, -1]} scale={[0.8, 0.8, 0.8]}>
+               <ViroPortal position={[0, 0, -2]} scale={[0.8, 0.8, 0.8]}>
                   <Viro3DObject
                      source={require('./portal_res/portal_archway/portal_archway.vrx')}
                      resources={[
@@ -95,20 +115,18 @@ var MainScene = createReactClass({
                   />
                </ViroPortal>
                <Viro360Image source={require('./portal_res/360_tiles.jpg')} />
-               {mazeGenerator([
-                  [1, 1, 2, 1, 1, 1, 1, 1],
-                  [1, 0, 0, 0, 0, 0, 0, 1],
-                  [1, 0, 1, 1, 1, 1, 0, 1],
-                  [1, 0, 0, 0, 0, 1, 0, 1],
-                  [1, 1, 1, 1, 1, 1, 0, 1],
-                  [1, 0, 0, 0, 0, 0, 0, 1],
-                  [1, 0, 0, 0, 1, 1, 0, 1],
-                  [1, 0, 1, 0, 0, 1, 0, 1],
-                  [1, 1, 1, 1, 0, 1, 1, 1],
-               ])}
+               {mazeGenerator(randomMaze())}
             </ViroPortalScene>
          </ViroARScene>
       );
+   },
+});
+
+ViroAnimations.registerAnimations({
+   animateCoin: {
+      properties: { rotateX: '+=360' },
+      easing: 'Linear',
+      duration: 2000,
    },
 });
 

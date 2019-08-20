@@ -85,15 +85,29 @@ export default class MainScene extends Component {
     };
   }
 
-  _onCameraARHitTest = results => {
-    const cameraPos = results.cameraOrientation.position;
-    console.log(cameraPos);
+  //   _onCameraARHitTest = results => {
+  //     const camArr = results.cameraOrientation.position;
+  //     const cameraPos = [
+  //       Number(camArr[0].toFixed(2)),
+  //       0,
+  //       Number(camArr[2].toFixed(2)),
+  //     ];
+  //     this.setState({
+  //       cameraPos,
+  //     });
+  //     //  this._collisionTest(cameraPos);
+  //   };
+  _onCameraTransformUpdate = results => {
+    const camArr = results.cameraTransform.position;
+    const cameraPos = [
+      Number(camArr[0].toFixed(2)),
+      0,
+      Number(camArr[2].toFixed(2)),
+    ];
     this.setState({
       cameraPos,
     });
-    //  this._collisionTest(cameraPos);
   };
-
   //   _collisionTest = cameraPos => {
   //     // wall collision
   //     const wallPos = locations.wallLocation;
@@ -111,10 +125,27 @@ export default class MainScene extends Component {
   //      Math.sqrt(Math.pow(object[0] - camera[0], 2) + Math.pow(object[1] - camera[1], 2) + Math.pow(object[2] - camera[2], 2))
   //   };
 
+  wallCollide = () => {
+    // when user object collides with wall
+  };
+
   render() {
-    const cameraPos = String(this._onCameraARHitTest);
     return (
-      <ViroARScene onCameraARHitTest={this._onCameraARHitTest}>
+      <ViroARScene onCameraTransformUpdate={this._onCameraTransformUpdate}>
+        <Viro3DObject
+          source={require('../../object_cube/object_cube.vrx')}
+          resources={[
+            require('../../object_cube/cube_diffuse.png'),
+            require('../../object_cube/cube_specular.png'),
+          ]}
+          scale={[0.5, 0.5, 0.5]}
+          position={this.state.cameraPos}
+          type="VRX"
+          //  physicsBody={{
+          //    type: 'Kinematic',
+          //  }}
+          onCollision={this.wallCollide}
+        />
         <ViroAmbientLight color="#ffffff" intensity={200} />
         <ViroText text={`${this.state.cameraPos}`} position={[0, 0, -1]} />
         <ViroPortalScene

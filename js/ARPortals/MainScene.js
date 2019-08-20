@@ -146,6 +146,7 @@ export default class MainScene extends Component {
   };
   _pushNextScene() {
     this.props.sceneNavigator.push({ scene: loseScreen });
+    setTimeout(this.props.viroAppProps.exit, 4000);
   }
   wallCollide = () => {
     // when user object collides with wall

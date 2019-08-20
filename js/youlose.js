@@ -15,13 +15,25 @@ import {
   ViroAnimations,
   ViroText,
   ViroMaterials,
+  ViroButton,
 } from 'react-viro';
 
 export default class YouLose extends Component {
+  _onButtonTap = () => {
+    this.props.viroAppProps.exit();
+  };
   render() {
     return (
       <ViroARScene>
         <Viro360Image source={require('../360_space.jpg')} />
+        <ViroButton
+          source={require('../object_cube/cube_diffuse.png')}
+          tapSource={require('../object_cube/cube_specular.png')}
+          position={[1, 3, -5]}
+          height={2}
+          width={3}
+          onTap={this._onButtonTap}
+        />
         <ViroText
           fontSize={100}
           style={styles.boldFont}

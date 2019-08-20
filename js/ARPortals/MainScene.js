@@ -15,17 +15,20 @@ import {
   ViroPortal,
   ViroPortalScene,
   Viro3DObject,
+  ViroAnimations,
   ViroText,
+  ViroMaterials,
 } from 'react-viro';
 
+import randomMaze from './mazes';
 const locations = {
   wallLocation: [],
 };
 
 const mazeGenerator = arr => {
   const render = [];
-  let initialX = -1;
-  let initialZ = -1;
+  let initialX = -5;
+  let initialZ = -2;
   for (let i = arr.length - 1; i >= 0; i--) {
     for (let j = 0; j < arr[0].length; j++) {
       initialX += 1;
@@ -67,36 +70,63 @@ const mazeGenerator = arr => {
             <Viro360Image source={require('./portal_res/360_tiles.jpg')} />
           </ViroPortalScene>
         );
-        locations.exitPortal = position;
+      } else if (arr[i][j] === 3) {
+        render.push(
+          <Viro3DObject
+            source={require('../../coin/coin.vrx')}
+            resources={[
+              require('../../coin/coin-texture.jpg'),
+              require('../../coin/img1.png'),
+              require('../../coin/img2.png'),
+              require('../../coin/img3.png'),
+              require('../../coin/gold.jpg'),
+            ]}
+            scale={[0.18, 0.18, 0.18]}
+            position={position}
+            type="VRX"
+            key={String.fromCharCode(i) + String.fromCharCode(j)}
+            animation={{ name: 'animateCoin', run: true, loop: true }}
+          />
+        );
       }
     }
-    initialX = -1;
-    initialZ++;
-    console.log(initialX, initialZ);
+    initialX = -5;
+    initialZ--;
   }
   return render;
 };
+const maze = randomMaze();
 
 export default class MainScene extends Component {
-  constructor() {
-    super();
-    this.state = {
-      cameraPos: [],
-    };
+  constructor(props) {
+    super(props);
+    this.state = { time: 35, cameraPos: [] };
+    this.interval = null;
   }
-
-  //   _onCameraARHitTest = results => {
-  //     const camArr = results.cameraOrientation.position;
-  //     const cameraPos = [
-  //       Number(camArr[0].toFixed(2)),
-  //       0,
-  //       Number(camArr[2].toFixed(2)),
-  //     ];
-  //     this.setState({
-  //       cameraPos,
-  //     });
-  //     //  this._collisionTest(cameraPos);
-  //   };
+  componentWillUnmount() {
+    this.stopTimer();
+  }
+  componentDidMount() {
+    if (!this.interval && this.state.time > 0) {
+      this.startTimer();
+    } else {
+      this.stopTimer();
+    }
+  }
+  startTimer = () => {
+    if (!this.interval && this.state.time > 0) {
+      this.interval = setInterval(
+        () => this.setState({ time: this.state.time - 1 }),
+        1000
+      );
+    } else {
+      this.stopTimer();
+    }
+  };
+  stopTimer = () => {
+    clearInterval(this.interval);
+    this.interval = null;
+  };
   _onCameraTransformUpdate = results => {
     const camArr = results.cameraTransform.position;
     const cameraPos = [
@@ -108,52 +138,53 @@ export default class MainScene extends Component {
       cameraPos,
     });
   };
-  //   _collisionTest = cameraPos => {
-  //     // wall collision
-  //     const wallPos = locations.wallLocation;
-  //     for (let i = 0; i < wallPos.length; i++) {
-  //       let distance = this._getDistance(wallPos[i], cameraPos);
-  //       if (distance < ) {
-  //         // something bad happens
-  //       }
-  //     }
-  //     // exit portal
-  //   };
-
-  //   _getDistance = (object, camera) => {
-  //      // need to account for size of wall
-  //      Math.sqrt(Math.pow(object[0] - camera[0], 2) + Math.pow(object[1] - camera[1], 2) + Math.pow(object[2] - camera[2], 2))
-  //   };
-
   wallCollide = () => {
     // when user object collides with wall
   };
 
   render() {
+    if (this.state.time <= 0) {
+      this.stopTimer();
+      return (
+        <ViroARScene onCameraTransformUpdate={this._onCameraTransformUpdate}>
+          <Viro3DObject
+            source={require('../../object_cube/object_cube.vrx')}
+            resources={[
+              require('../../object_cube/cube_diffuse.png'),
+              require('../../object_cube/cube_specular.png'),
+            ]}
+            scale={[0.5, 0.5, 0.5]}
+            position={this.state.cameraPos}
+            type="VRX"
+            //  physicsBody={{
+            //    type: 'Kinematic',
+            //  }}
+            onCollision={this.wallCollide}
+          />
+          <Viro360Image source={require('../../360_space.jpg')} />
+          <ViroText
+            fontSize={100}
+            style={styles.boldFont}
+            position={[0, 1, -4]}
+            width={200}
+            height={5}
+            extrusionDepth={8}
+            materials={['frontMaterial', 'backMaterial', 'sideMaterial']}
+            text={'You Lose!'}
+            onTap={this.handleTap}
+          />
+        </ViroARScene>
+      );
+    }
     return (
-      <ViroARScene onCameraTransformUpdate={this._onCameraTransformUpdate}>
-        <Viro3DObject
-          source={require('../../object_cube/object_cube.vrx')}
-          resources={[
-            require('../../object_cube/cube_diffuse.png'),
-            require('../../object_cube/cube_specular.png'),
-          ]}
-          scale={[0.5, 0.5, 0.5]}
-          position={this.state.cameraPos}
-          type="VRX"
-          //  physicsBody={{
-          //    type: 'Kinematic',
-          //  }}
-          onCollision={this.wallCollide}
-        />
+      <ViroARScene>
         <ViroAmbientLight color="#ffffff" intensity={200} />
-        <ViroText text={`${this.state.cameraPos}`} position={[0, 0, -1]} />
         <ViroPortalScene
           passable={true}
           dragType="FixedDistance"
           onDrag={() => {}}
         >
-          <ViroPortal position={[4, 0, -1]} scale={[0.8, 0.8, 0.8]}>
+          <ViroPortal position={[0, 0, -2]} scale={[0.8, 0.8, 0.8]}>
             <Viro3DObject
               source={require('./portal_res/portal_archway/portal_archway.vrx')}
               resources={[
@@ -165,21 +196,53 @@ export default class MainScene extends Component {
             />
           </ViroPortal>
           <Viro360Image source={require('./portal_res/360_tiles.jpg')} />
-          {mazeGenerator([
-            [1, 1, 2, 1, 1, 1, 1, 1],
-            [1, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 1, 1, 1, 1, 0, 1],
-            [1, 0, 0, 0, 0, 1, 0, 1],
-            [1, 1, 1, 1, 1, 1, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 1, 1, 0, 1],
-            [1, 0, 1, 0, 0, 1, 0, 1],
-            [1, 1, 1, 1, 0, 1, 1, 1],
-          ])}
+          <ViroText
+            fontSize={100}
+            style={styles.boldFont}
+            position={[0, 1.5, -4]}
+            width={200}
+            height={5}
+            extrusionDepth={8}
+            materials={['frontMaterial', 'backMaterial', 'sideMaterial']}
+            text={String(this.state.time)}
+            onTap={this.handleTap}
+          />
+          {mazeGenerator(maze)}
         </ViroPortalScene>
       </ViroARScene>
     );
   }
 }
+
+// Outside render function
+
+var styles = StyleSheet.create({
+  boldFont: {
+    color: '#FFFFFF',
+    flex: 1,
+    textAlignVertical: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+});
+
+ViroMaterials.createMaterials({
+  frontMaterial: {
+    diffuseColor: '#FFFFFF',
+  },
+  backMaterial: {
+    diffuseColor: '#FF0000',
+  },
+  sideMaterial: {
+    diffuseColor: '#0000FF',
+  },
+});
+ViroAnimations.registerAnimations({
+  animateCoin: {
+    properties: { rotateX: '+=360' },
+    easing: 'Linear',
+    duration: 2000,
+  },
+});
 
 module.exports = MainScene;

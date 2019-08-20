@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import { StyleSheet } from 'react-native';
+import YouLose from '../youlose';
 
 import {
   ViroSceneNavigator,
@@ -24,6 +25,8 @@ import randomMaze from './mazes';
 const locations = {
   wallLocation: [],
 };
+
+let loseScreen = require('../youlose.js');
 
 const mazeGenerator = arr => {
   const render = [];
@@ -100,7 +103,7 @@ const maze = randomMaze();
 export default class MainScene extends Component {
   constructor(props) {
     super(props);
-    this.state = { time: 35, cameraPos: [] };
+    this.state = { time: 15, cameraPos: [] };
     this.interval = null;
   }
   componentWillUnmount() {
@@ -115,10 +118,13 @@ export default class MainScene extends Component {
   }
   startTimer = () => {
     if (!this.interval && this.state.time > 0) {
-      this.interval = setInterval(
-        () => this.setState({ time: this.state.time - 1 }),
-        1000
-      );
+      this.interval = setInterval(() => {
+        this.setState({ time: this.state.time - 1 });
+        if (!this.state.time) {
+          this._pushNextScene();
+          this.stopTimer();
+        }
+      }, 1000);
     } else {
       this.stopTimer();
     }
@@ -138,46 +144,30 @@ export default class MainScene extends Component {
       cameraPos,
     });
   };
+  _pushNextScene() {
+    this.props.sceneNavigator.push({ scene: loseScreen });
+  }
   wallCollide = () => {
     // when user object collides with wall
   };
 
   render() {
-    if (this.state.time <= 0) {
-      this.stopTimer();
-      return (
-        <ViroARScene onCameraTransformUpdate={this._onCameraTransformUpdate}>
-          <Viro3DObject
-            source={require('../../object_cube/object_cube.vrx')}
-            resources={[
-              require('../../object_cube/cube_diffuse.png'),
-              require('../../object_cube/cube_specular.png'),
-            ]}
-            scale={[0.5, 0.5, 0.5]}
-            position={this.state.cameraPos}
-            type="VRX"
-            //  physicsBody={{
-            //    type: 'Kinematic',
-            //  }}
-            onCollision={this.wallCollide}
-          />
-          <Viro360Image source={require('../../360_space.jpg')} />
-          <ViroText
-            fontSize={100}
-            style={styles.boldFont}
-            position={[0, 1, -4]}
-            width={200}
-            height={5}
-            extrusionDepth={8}
-            materials={['frontMaterial', 'backMaterial', 'sideMaterial']}
-            text={'You Lose!'}
-            onTap={this.handleTap}
-          />
-        </ViroARScene>
-      );
-    }
     return (
       <ViroARScene>
+        <Viro3DObject
+          source={require('../../object_cube/object_cube.vrx')}
+          resources={[
+            require('../../object_cube/cube_diffuse.png'),
+            require('../../object_cube/cube_specular.png'),
+          ]}
+          scale={[0.5, 0.5, 0.5]}
+          position={this.state.cameraPos}
+          type="VRX"
+          //  physicsBody={{
+          //    type: 'Kinematic',
+          //  }}
+          onCollision={this.wallCollide}
+        />
         <ViroAmbientLight color="#ffffff" intensity={200} />
         <ViroPortalScene
           passable={true}

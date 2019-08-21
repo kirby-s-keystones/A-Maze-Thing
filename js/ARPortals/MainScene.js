@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 
 import { StyleSheet } from 'react-native';
 import YouLose from '../youlose';
+import NavBar from '../../Views/NavBar.js';
 
 import {
   ViroSceneNavigator,
@@ -146,7 +147,7 @@ export default class MainScene extends Component {
   };
   _pushNextScene() {
     this.props.sceneNavigator.push({ scene: loseScreen });
-    setTimeout(this.props.viroAppProps.exit, 4000);
+    setTimeout(this.props.arSceneNavigator.viroAppProps.exit, 5000);
   }
   wallCollide = () => {
     // when user object collides with wall
@@ -200,6 +201,7 @@ export default class MainScene extends Component {
           />
           {mazeGenerator(maze)}
         </ViroPortalScene>
+        <NavBar />
       </ViroARScene>
     );
   }

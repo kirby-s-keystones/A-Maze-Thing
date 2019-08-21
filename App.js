@@ -15,10 +15,20 @@ import {
   StyleSheet,
   PixelRatio,
   TouchableHighlight,
+  Image,
 } from 'react-native';
+
+import FontAwesome, {
+  RegularIcons,
+  BrandIcons,
+} from 'react-native-fontawesome';
+
+// import { Icon } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 import { secret } from './secrets.js';
 
-import { ViroARSceneNavigator } from 'react-viro';
+import { ViroARSceneNavigator, ViroText } from 'react-viro';
 
 const apiKey = secret.apiKey;
 
@@ -40,23 +50,21 @@ export default class App extends Component {
       navigatorType: defaultNavigatorType,
       sharedProps: sharedProps,
     };
-    this._getExperienceSelector = this._getExperienceSelector.bind(this);
-    this._getARNavigator = this._getARNavigator.bind(this);
-    this._getExperienceButtonOnPress = this._getExperienceButtonOnPress.bind(
-      this
-    );
+    this.getHomeScreen = this.getHomeScreen.bind(this);
+    this.getMaze = this.getMaze.bind(this);
+    this.selectScreen = this.selectScreen.bind(this);
     this._exitViro = this._exitViro.bind(this);
   }
 
   render() {
     if (this.state.navigatorType == UNSET) {
-      return this._getExperienceSelector();
+      return this.getHomeScreen();
     } else if (this.state.navigatorType == AR_NAVIGATOR_TYPE) {
-      return this._getARNavigator();
+      return this.getMaze();
     }
   }
 
-  _getExperienceSelector() {
+  getHomeScreen() {
     return (
       <View style={localStyles.outer}>
         <View style={localStyles.inner}>
@@ -64,7 +72,7 @@ export default class App extends Component {
 
           <TouchableHighlight
             style={localStyles.buttons}
-            onPress={this._getExperienceButtonOnPress(AR_NAVIGATOR_TYPE)}
+            onPress={this.selectScreen(AR_NAVIGATOR_TYPE)}
             underlayColor={'#68a0ff'}
           >
             <Text style={localStyles.buttonText}>Load Random Maze</Text>
@@ -82,17 +90,36 @@ export default class App extends Component {
     );
   }
 
-  _getARNavigator() {
+  getMaze() {
     return (
-      <ViroARSceneNavigator
-        {...this.state.sharedProps}
-        initialScene={{ scene: InitialARScene }}
-        viroAppProps={{ exit: this._exitViro }}
-      />
+      <View style={localStyles.container}>
+        <ViroARSceneNavigator
+          style={localStyles.arView}
+          {...this.state.sharedProps}
+          initialScene={{ scene: InitialARScene }}
+          viroAppProps={{ exit: this._exitViro }}
+        />
+        <View
+          style={{
+            flex: 0.2,
+            backgroundColor: 'transparent',
+            position: 'absolute',
+            zIndex: 2,
+            padding: 10,
+          }}
+        >
+          <TouchableHighlight onPress={this._exitViro}>
+            <Image
+              source={require('./assets/home.png')}
+              style={{ height: 40, width: 40, opacity: 0.5 }}
+            />
+          </TouchableHighlight>
+        </View>
+      </View>
     );
   }
 
-  _getExperienceButtonOnPress(navigatorType) {
+  selectScreen(navigatorType) {
     return () => {
       this.setState({
         navigatorType: navigatorType,
@@ -108,6 +135,12 @@ export default class App extends Component {
 }
 
 let localStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  arView: {
+    flex: 1,
+  },
   viroContainer: {
     flex: 1,
     backgroundColor: 'black',

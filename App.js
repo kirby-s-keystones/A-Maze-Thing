@@ -49,6 +49,8 @@ export default class App extends Component {
     this.state = {
       navigatorType: defaultNavigatorType,
       sharedProps: sharedProps,
+      coinsCollected: 0,
+      totalCoins: 0,
     };
     this.getHomeScreen = this.getHomeScreen.bind(this);
     this.getMaze = this.getMaze.bind(this);
@@ -97,7 +99,11 @@ export default class App extends Component {
           style={localStyles.arView}
           {...this.state.sharedProps}
           initialScene={{ scene: InitialARScene }}
-          viroAppProps={{ exit: this._exitViro }}
+          viroAppProps={{
+            exit: this._exitViro,
+            incrementCoins: this.incrementCoins,
+            setTotalCoins: this.setTotalCoins,
+          }}
         />
         <View
           style={{
@@ -114,10 +120,21 @@ export default class App extends Component {
               style={{ height: 40, width: 40, opacity: 0.5 }}
             />
           </TouchableHighlight>
+          <Text>{`${this.state.coinsCollected}/${this.state.totalCoins}`}</Text>
         </View>
       </View>
     );
   }
+
+  incrementCoins = () => {
+    this.setState(previousState => {
+      return { coinsCollected: previousState.coinsCollected + 1 };
+    });
+  };
+
+  setTotalCoins = num => {
+    this.setState({ totalCoins: num });
+  };
 
   selectScreen(navigatorType) {
     return () => {

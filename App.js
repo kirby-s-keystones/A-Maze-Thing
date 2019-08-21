@@ -103,6 +103,7 @@ export default class App extends Component {
             exit: this._exitViro,
             incrementCoins: this.incrementCoins,
             setTotalCoins: this.setTotalCoins,
+            coinsCollected: this.state.coinsCollected,
           }}
         />
         <View

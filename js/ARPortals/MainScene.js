@@ -3,7 +3,6 @@
 import React, { Component } from 'react';
 
 import { StyleSheet } from 'react-native';
-import YouLose from '../youlose';
 import NavBar from '../../Views/NavBar.js';
 
 import {
@@ -29,19 +28,25 @@ const locations = {
 
 let totalCoins = 0;
 let loseScreen = require('../youlose.js');
+let winScreen = require('../youWin.js');
 
 const maze = randomMaze();
 
 export default class MainScene extends Component {
   constructor(props) {
     super(props);
-    this.state = { time: 905, cameraPos: [] };
+    this.state = { time: 550, cameraPos: [], won: false };
     this.interval = null;
   }
   componentWillUnmount() {
     this.stopTimer();
   }
   componentDidMount() {
+    const props = this.props.arSceneNavigator.viroAppProps;
+    if (totalCoins && totalCoins === props.coinsCollected) {
+      this.win();
+    }
+
     if (!totalCoins) {
       this.getTotalCoins(maze);
     }
@@ -51,13 +56,24 @@ export default class MainScene extends Component {
       this.stopTimer();
     }
   }
+  componentDidUpdate() {
+    const props = this.props.arSceneNavigator.viroAppProps;
+    if (totalCoins && totalCoins === props.coinsCollected && !this.state.won) {
+      this.win();
+    }
+  }
+
+  win = () => {
+    this.setState({ won: true });
+  };
+
   startTimer = () => {
     if (!this.interval && this.state.time > 0) {
       this.interval = setInterval(() => {
         this.setState({ time: this.state.time - 1 });
-        if (!this.state.time) {
-          this._pushNextScene();
+        if (!this.state.time || this.state.won) {
           this.stopTimer();
+          this._pushNextScene();
         }
       }, 1000);
     } else {
@@ -80,8 +96,15 @@ export default class MainScene extends Component {
     });
   };
   _pushNextScene() {
-    this.props.sceneNavigator.push({ scene: loseScreen });
-    setTimeout(this.props.arSceneNavigator.viroAppProps.exit, 5000);
+    if (!this.state.won) {
+      this.props.sceneNavigator.push({ scene: loseScreen });
+    } else {
+      this.props.sceneNavigator.push({ scene: winScreen });
+    }
+    setTimeout(() => {
+      this.setState({ won: false });
+      this.props.arSceneNavigator.viroAppProps.exit();
+    }, 5000);
   }
   wallCollide = () => {
     // when user object collides with wall

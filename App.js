@@ -18,17 +18,9 @@ import {
   Image,
 } from 'react-native';
 
-import FontAwesome, {
-  RegularIcons,
-  BrandIcons,
-} from 'react-native-fontawesome';
-
-// import { Icon } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
-
 import { secret } from './secrets.js';
 
-import { ViroARSceneNavigator, ViroText } from 'react-viro';
+import { ViroARSceneNavigator } from 'react-viro';
 
 const apiKey = secret.apiKey;
 
@@ -36,7 +28,7 @@ let sharedProps = {
   apiKey,
 };
 
-let InitialARScene = require('./js/ARPortals/MainScene.js');
+let InitialARScene = require('./js/MainScene.js');
 
 let UNSET = 'UNSET';
 let AR_NAVIGATOR_TYPE = 'AR';
@@ -148,6 +140,8 @@ export default class App extends Component {
   _exitViro() {
     this.setState({
       navigatorType: UNSET,
+      totalCoins: 0,
+      coinsCollected: 0,
     });
   }
 }

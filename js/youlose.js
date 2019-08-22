@@ -1,28 +1,13 @@
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 
-import {
-  ViroSceneNavigator,
-  ViroScene,
-  ViroARScene,
-  ViroAmbientLight,
-  Viro360Video,
-  Viro360Image,
-  ViroUtils,
-  ViroPortal,
-  ViroPortalScene,
-  Viro3DObject,
-  ViroAnimations,
-  ViroText,
-  ViroMaterials,
-  ViroButton,
-} from 'react-viro';
+import { ViroARScene, Viro360Image, ViroText, ViroMaterials } from 'react-viro';
 
 export default class YouLose extends Component {
   render() {
     return (
       <ViroARScene>
-        <Viro360Image source={require('../360_space.jpg')} />
+        <Viro360Image source={require('./res/360_space.jpg')} />
         <ViroText
           fontSize={100}
           style={styles.boldFont}

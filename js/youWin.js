@@ -1,33 +1,15 @@
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 
-import {
-  ViroSceneNavigator,
-  ViroScene,
-  ViroARScene,
-  ViroAmbientLight,
-  Viro360Video,
-  Viro360Image,
-  ViroUtils,
-  ViroPortal,
-  ViroPortalScene,
-  Viro3DObject,
-  ViroAnimations,
-  ViroText,
-  ViroMaterials,
-  ViroButton,
-} from 'react-viro';
+import { ViroARScene, Viro360Image, ViroText, ViroMaterials } from 'react-viro';
 
 export default class YouWin extends Component {
   render() {
     return (
       <ViroARScene>
-        <Viro360Video
-          source={require('./res/win.mp4')}
-          loop={true}
-          volume={0}
+        <Viro360Image
+          source={require('./ARPortals/portal_res/360_island.jpg')}
         />
-        {/* <Viro360Image source={require('../360_space.jpg')} />
         <ViroText
           fontSize={100}
           style={styles.boldFont}
@@ -38,7 +20,7 @@ export default class YouWin extends Component {
           materials={['frontMaterial', 'backMaterial', 'sideMaterial']}
           text={'You Win!'}
           onTap={this.handleTap}
-        /> */}
+        />
       </ViroARScene>
     );
   }

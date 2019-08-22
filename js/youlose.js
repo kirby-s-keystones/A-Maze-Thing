@@ -15,6 +15,7 @@ import {
   ViroAnimations,
   ViroText,
   ViroMaterials,
+  ViroButton,
 } from 'react-viro';
 
 export default class YouLose extends Component {

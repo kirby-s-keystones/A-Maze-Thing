@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import { StyleSheet } from 'react-native';
-import YouLose from '../youlose';
+import NavBar from '../../Views/NavBar.js';
 
 import {
   ViroSceneNavigator,
@@ -26,103 +26,54 @@ const locations = {
   wallLocation: [],
 };
 
+let totalCoins = 0;
 let loseScreen = require('../youlose.js');
+let winScreen = require('../youWin.js');
 
-const mazeGenerator = arr => {
-  const render = [];
-  let initialX = -5;
-  let initialZ = -2;
-  for (let i = arr.length - 1; i >= 0; i--) {
-    for (let j = 0; j < arr[0].length; j++) {
-      initialX += 1;
-      let position = [initialX, 0, initialZ];
-      if (arr[i][j] === 1) {
-        render.push(
-          <Viro3DObject
-            source={require('../../object_cube/object_cube.vrx')}
-            resources={[
-              require('../../object_cube/cube_diffuse.png'),
-              require('../../object_cube/cube_specular.png'),
-            ]}
-            scale={[1.0, 1.0, 1.0]}
-            position={position}
-            type="VRX"
-            key={String.fromCharCode(i) + String.fromCharCode(j)}
-          />
-        );
-        locations.wallLocation.push(position);
-      } else if (arr[i][j] === 2) {
-        render.push(
-          <ViroPortalScene
-            passable={true}
-            dragType="FixedDistance"
-            onDrag={() => {}}
-            key={String.fromCharCode(i) + String.fromCharCode(j)}
-          >
-            <ViroPortal position={position} scale={[0.8, 0.8, 0.8]}>
-              <Viro3DObject
-                source={require('./portal_res/portal_archway/portal_archway.vrx')}
-                resources={[
-                  require('./portal_res/portal_archway/portal_archway_diffuse.png'),
-                  require('./portal_res/portal_archway/portal_archway_normal.png'),
-                  require('./portal_res/portal_archway/portal_archway_specular.png'),
-                ]}
-                type="VRX"
-              />
-            </ViroPortal>
-            <Viro360Image source={require('./portal_res/360_tiles.jpg')} />
-          </ViroPortalScene>
-        );
-      } else if (arr[i][j] === 3) {
-        render.push(
-          <Viro3DObject
-            source={require('../../coin/coin.vrx')}
-            resources={[
-              require('../../coin/coin-texture.jpg'),
-              require('../../coin/img1.png'),
-              require('../../coin/img2.png'),
-              require('../../coin/img3.png'),
-              require('../../coin/gold.jpg'),
-            ]}
-            scale={[0.18, 0.18, 0.18]}
-            position={position}
-            type="VRX"
-            key={String.fromCharCode(i) + String.fromCharCode(j)}
-            animation={{ name: 'animateCoin', run: true, loop: true }}
-          />
-        );
-      }
-    }
-    initialX = -5;
-    initialZ--;
-  }
-  return render;
-};
 const maze = randomMaze();
 
 export default class MainScene extends Component {
   constructor(props) {
     super(props);
-    this.state = { time: 15, cameraPos: [] };
+    this.state = { time: 550, cameraPos: [], won: false };
     this.interval = null;
   }
   componentWillUnmount() {
     this.stopTimer();
   }
   componentDidMount() {
+    const props = this.props.arSceneNavigator.viroAppProps;
+    if (totalCoins && totalCoins === props.coinsCollected) {
+      this.win();
+    }
+
+    if (!totalCoins) {
+      this.getTotalCoins(maze);
+    }
     if (!this.interval && this.state.time > 0) {
       this.startTimer();
     } else {
       this.stopTimer();
     }
   }
+  componentDidUpdate() {
+    const props = this.props.arSceneNavigator.viroAppProps;
+    if (totalCoins && totalCoins === props.coinsCollected && !this.state.won) {
+      this.win();
+    }
+  }
+
+  win = () => {
+    this.setState({ won: true });
+  };
+
   startTimer = () => {
     if (!this.interval && this.state.time > 0) {
       this.interval = setInterval(() => {
         this.setState({ time: this.state.time - 1 });
-        if (!this.state.time) {
-          this._pushNextScene();
+        if (!this.state.time || this.state.won) {
           this.stopTimer();
+          this._pushNextScene();
         }
       }, 1000);
     } else {
@@ -145,10 +96,107 @@ export default class MainScene extends Component {
     });
   };
   _pushNextScene() {
-    this.props.sceneNavigator.push({ scene: loseScreen });
+    if (!this.state.won) {
+      this.props.sceneNavigator.push({ scene: loseScreen });
+    } else {
+      this.props.sceneNavigator.push({ scene: winScreen });
+    }
+    setTimeout(() => {
+      this.setState({ won: false });
+      this.props.arSceneNavigator.viroAppProps.exit();
+    }, 5000);
   }
   wallCollide = () => {
     // when user object collides with wall
+  };
+  getTotalCoins = arr => {
+    for (let i = arr.length - 1; i >= 0; i--) {
+      for (let j = 0; j < arr[0].length; j++) {
+        if (arr[i][j] === 3) {
+          totalCoins++;
+        }
+      }
+    }
+    this.props.arSceneNavigator.viroAppProps.setTotalCoins(totalCoins);
+  };
+  mazeGenerator = arr => {
+    const render = [];
+    let initialX = -5;
+    let initialZ = -2;
+    const props = this.props.arSceneNavigator.viroAppProps;
+    for (let i = arr.length - 1; i >= 0; i--) {
+      for (let j = 0; j < arr[0].length; j++) {
+        initialX += 1;
+        let position = [initialX, 0, initialZ];
+        if (arr[i][j] === 1) {
+          render.push(
+            <Viro3DObject
+              source={require('../../object_cube/object_cube.vrx')}
+              resources={[
+                require('../../object_cube/cube_diffuse.png'),
+                require('../../object_cube/cube_specular.png'),
+              ]}
+              scale={[1.0, 1.0, 1.0]}
+              position={position}
+              type="VRX"
+              key={String.fromCharCode(i) + String.fromCharCode(j)}
+            />
+          );
+          locations.wallLocation.push(position);
+        } else if (arr[i][j] === 2) {
+          render.push(
+            <ViroPortalScene
+              passable={true}
+              dragType="FixedDistance"
+              onDrag={() => {}}
+              key={String.fromCharCode(i) + String.fromCharCode(j)}
+            >
+              <ViroPortal position={position} scale={[0.8, 0.8, 0.8]}>
+                <Viro3DObject
+                  source={require('./portal_res/portal_archway/portal_archway.vrx')}
+                  resources={[
+                    require('./portal_res/portal_archway/portal_archway_diffuse.png'),
+                    require('./portal_res/portal_archway/portal_archway_normal.png'),
+                    require('./portal_res/portal_archway/portal_archway_specular.png'),
+                  ]}
+                  type="VRX"
+                />
+              </ViroPortal>
+              <Viro360Image source={require('./portal_res/360_tiles.jpg')} />
+            </ViroPortalScene>
+          );
+        } else if (arr[i][j] === 3) {
+          render.push(
+            <Viro3DObject
+              source={require('../../coin/coin.vrx')}
+              resources={[
+                require('../../coin/coin-texture.jpg'),
+                require('../../coin/img1.png'),
+                require('../../coin/img2.png'),
+                require('../../coin/img3.png'),
+                require('../../coin/gold.jpg'),
+              ]}
+              scale={[0.18, 0.18, 0.18]}
+              position={position}
+              type="VRX"
+              key={String.fromCharCode(i) + String.fromCharCode(j)}
+              animation={{ name: 'animateCoin', run: true, loop: true }}
+              onClick={() => {
+                props.incrementCoins();
+                arr[i][j] = 0;
+              }}
+              onPress={() => {
+                props.incrementCoins();
+                arr[i][j] = 0;
+              }}
+            />
+          );
+        }
+      }
+      initialX = -5;
+      initialZ--;
+    }
+    return render;
   };
 
   render() {
@@ -197,8 +245,9 @@ export default class MainScene extends Component {
             text={String(this.state.time)}
             onTap={this.handleTap}
           />
-          {mazeGenerator(maze)}
+          {this.mazeGenerator(maze)}
         </ViroPortalScene>
+        <NavBar />
       </ViroARScene>
     );
   }

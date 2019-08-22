@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { Component } from 'react';
-
+import axios from 'axios';
 import { StyleSheet } from 'react-native';
 import NavBar from '../../Views/NavBar.js';
 
@@ -35,7 +35,7 @@ const maze = randomMaze();
 export default class MainScene extends Component {
   constructor(props) {
     super(props);
-    this.state = { time: 550, cameraPos: [], won: false };
+    this.state = { time: 550, cameraPos: [], won: false, maze: [] };
     this.interval = null;
   }
   componentWillUnmount() {
@@ -198,7 +198,25 @@ export default class MainScene extends Component {
     return render;
   };
 
+  getMaze = async () => {
+    try {
+      const {data} = await axios.get('https://powerful-headland-69931.herokuapp.com/api/maze');
+
+      const randMaze = Math.floor(Math.random() * data.length);
+
+      this.setState({
+        maze: data[randMaze].maze
+      });
+    } catch(err) {
+      console.error(err);
+    }
+  }
+
   render() {
+
+    if (!this.state.maze.length) {
+      this.getMaze();
+    }
     return (
       <ViroARScene>
         <ViroAmbientLight color="#ffffff" intensity={200} />
@@ -244,7 +262,7 @@ export default class MainScene extends Component {
             text={String(this.state.time)}
             onTap={this.handleTap}
           />
-          {this.mazeGenerator(maze)}
+          {this.mazeGenerator(this.state.maze)}
         </ViroPortalScene>
         <NavBar />
       </ViroARScene>

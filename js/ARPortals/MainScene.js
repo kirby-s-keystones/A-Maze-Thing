@@ -131,11 +131,12 @@ export default class MainScene extends Component {
         if (arr[i][j] === 1) {
           render.push(
             <Viro3DObject
-              source={require('../../object_cube/object_cube.vrx')}
+              source={require('../res/object_cube/object_cube.vrx')}
               resources={[
-                require('../../object_cube/cube_diffuse.png'),
-                require('../../object_cube/cube_specular.png'),
+                require('../res/object_cube/cube_diffuse.png'),
+                require('../res/object_cube/cube_specular.png'),
               ]}
+              materials="hedge"
               scale={[1.0, 1.0, 1.0]}
               position={position}
               type="VRX"
@@ -181,13 +182,11 @@ export default class MainScene extends Component {
               type="VRX"
               key={String.fromCharCode(i) + String.fromCharCode(j)}
               animation={{ name: 'animateCoin', run: true, loop: true }}
-              onClick={() => {
-                props.incrementCoins();
-                arr[i][j] = 0;
-              }}
-              onPress={() => {
-                props.incrementCoins();
-                arr[i][j] = 0;
+              onClickState={state => {
+                if (state === 1) {
+                  props.incrementCoins();
+                  arr[i][j] = 0;
+                }
               }}
             />
           );
@@ -202,6 +201,7 @@ export default class MainScene extends Component {
   render() {
     return (
       <ViroARScene>
+        <ViroAmbientLight color="#ffffff" intensity={200} />
         <Viro3DObject
           source={require('../../object_cube/object_cube.vrx')}
           resources={[
@@ -216,7 +216,6 @@ export default class MainScene extends Component {
           //  }}
           onCollision={this.wallCollide}
         />
-        <ViroAmbientLight color="#ffffff" intensity={200} />
         <ViroPortalScene
           passable={true}
           dragType="FixedDistance"
@@ -275,12 +274,16 @@ ViroMaterials.createMaterials({
   sideMaterial: {
     diffuseColor: '#0000FF',
   },
+  hedge: {
+    shininess: 2.0,
+    lightingModel: 'Blinn',
+  },
 });
 ViroAnimations.registerAnimations({
   animateCoin: {
     properties: { rotateX: '+=360' },
     easing: 'Linear',
-    duration: 2000,
+    duration: 6000,
   },
 });
 

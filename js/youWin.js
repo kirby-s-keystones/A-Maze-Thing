@@ -22,7 +22,12 @@ export default class YouWin extends Component {
   render() {
     return (
       <ViroARScene>
-        <Viro360Image source={require('../360_space.jpg')} />
+        <Viro360Video
+          source={require('./res/win.mp4')}
+          loop={true}
+          volume={0}
+        />
+        {/* <Viro360Image source={require('../360_space.jpg')} />
         <ViroText
           fontSize={100}
           style={styles.boldFont}
@@ -33,7 +38,7 @@ export default class YouWin extends Component {
           materials={['frontMaterial', 'backMaterial', 'sideMaterial']}
           text={'You Win!'}
           onTap={this.handleTap}
-        />
+        /> */}
       </ViroARScene>
     );
   }

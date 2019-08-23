@@ -160,13 +160,28 @@ export default class App extends Component {
                      </View>
                   );
                })}
-               <TouchableHighlight
-                  style={localStyles.buttons}
-                  onPress={() => this.getMatchingMazes(this.state.searchQuery)}
-                  underlayColor={'#68a0ff'}
-               >
-                  <Text style={localStyles.buttonText}>Find</Text>
-               </TouchableHighlight>
+               <View style={{ flex: 1, flexDirection: 'row' }}>
+                  <View style={{ flex: 0.5 }}>
+                     <TouchableHighlight
+                        style={localStyles.buttons}
+                        onPress={() => this.selectScreen(UNSET)}
+                        underlayColor={'#68a0ff'}
+                     >
+                        <Text style={localStyles.buttonText}>Back to Home</Text>
+                     </TouchableHighlight>
+                  </View>
+                  <View style={{ flex: 0.5 }}>
+                     <TouchableHighlight
+                        style={localStyles.buttons}
+                        onPress={() =>
+                           this.getMatchingMazes(this.state.searchQuery)
+                        }
+                        underlayColor={'#68a0ff'}
+                     >
+                        <Text style={localStyles.buttonText}>Find</Text>
+                     </TouchableHighlight>
+                  </View>
+               </View>
             </View>
          </View>
       );

@@ -16,6 +16,8 @@ import {
    PixelRatio,
    TouchableHighlight,
    Image,
+   Linking,
+   TextInput,
 } from 'react-native';
 
 import { secret } from './secrets.js';
@@ -33,6 +35,7 @@ let InitialARScene = require('./js/MainScene.js');
 
 let UNSET = 'UNSET';
 let AR_NAVIGATOR_TYPE = 'AR';
+let FIND_MAZE = 'FIND_MAZE';
 let defaultNavigatorType = UNSET;
 
 export default class App extends Component {
@@ -46,6 +49,9 @@ export default class App extends Component {
          totalCoins: 0,
          won: false,
          maze: [],
+         searchQuery: '',
+         mazes: [],
+         filteredMazes: [],
       };
    }
 
@@ -60,6 +66,8 @@ export default class App extends Component {
          return this.getHomeScreen();
       } else if (this.state.navigatorType == AR_NAVIGATOR_TYPE) {
          return this.renderAR();
+      } else if (this.state.navigatorType == FIND_MAZE) {
+         return this.renderFind();
       }
    }
    getTotalCoins = arr => {
@@ -82,7 +90,7 @@ export default class App extends Component {
 
                <TouchableHighlight
                   style={localStyles.buttons}
-                  onPress={this.selectScreen(AR_NAVIGATOR_TYPE)}
+                  onPress={() => this.selectScreen(AR_NAVIGATOR_TYPE)}
                   underlayColor={'#68a0ff'}
                >
                   <Text style={localStyles.buttonText}>Load Random Maze</Text>
@@ -90,10 +98,74 @@ export default class App extends Component {
 
                <TouchableHighlight
                   style={localStyles.buttons}
-                  onPress={() => {}}
+                  onPress={() =>
+                     Linking.openURL(
+                        'https://powerful-headland-69931.herokuapp.com/',
+                     )
+                  }
                   underlayColor={'#68a0ff'}
                >
                   <Text style={localStyles.buttonText}>Create a Maze</Text>
+               </TouchableHighlight>
+               <TouchableHighlight
+                  style={localStyles.buttons}
+                  onPress={() => this.selectScreen(FIND_MAZE)}
+                  underlayColor={'#68a0ff'}
+               >
+                  <Text style={localStyles.buttonText}>Find A Maze</Text>
+               </TouchableHighlight>
+            </View>
+         </View>
+      );
+   };
+
+   renderFind = () => {
+      return (
+         <View style={localStyles.outer}>
+            <View style={localStyles.inner}>
+               <Text style={localStyles.titleText}>Maze Finder</Text>
+               <TextInput
+                  style={{
+                     height: 40,
+                     borderColor: 'gray',
+                     borderWidth: 1,
+                     color: 'white',
+                  }}
+                  onChangeText={searchQuery => this.setState({ searchQuery })}
+                  value={this.state.searchQuery}
+               />
+               {this.state.filteredMazes.map(maze => {
+                  return (
+                     <View
+                        key={maze.name}
+                        style={{ flex: 1, flexDirection: 'row' }}
+                     >
+                        <View style={{ flex: 0.66 }}>
+                           <Text style={localStyles.buttonText}>
+                              {maze.name}
+                           </Text>
+                        </View>
+                        <View style={{ flex: 0.34 }}>
+                           <TouchableHighlight
+                              style={localStyles.buttons}
+                              onPress={() => {
+                                 this.setMaze(maze);
+                                 this.selectScreen(AR_NAVIGATOR_TYPE);
+                              }}
+                              underlayColor={'#68a0ff'}
+                           >
+                              <Text style={localStyles.buttonText}>Select</Text>
+                           </TouchableHighlight>
+                        </View>
+                     </View>
+                  );
+               })}
+               <TouchableHighlight
+                  style={localStyles.buttons}
+                  onPress={() => this.getMatchingMazes(this.state.searchQuery)}
+                  underlayColor={'#68a0ff'}
+               >
+                  <Text style={localStyles.buttonText}>Find</Text>
                </TouchableHighlight>
             </View>
          </View>
@@ -141,6 +213,16 @@ export default class App extends Component {
          </View>
       );
    };
+   setMaze = ({ maze }) => {
+      const totalCoins = this.getTotalCoins(maze);
+      this.setState({ maze, totalCoins });
+   };
+   getMatchingMazes = query => {
+      const filteredMazes = this.state.mazes.filter(({ name }) =>
+         name.match(query),
+      );
+      this.setState({ filteredMazes });
+   };
    win = () => {
       this.setState({ won: true });
    };
@@ -157,6 +239,7 @@ export default class App extends Component {
          this.setState({
             maze: data[randMaze].maze,
             totalCoins,
+            mazes: data,
          });
       } catch (err) {
          console.error(err);
@@ -176,11 +259,9 @@ export default class App extends Component {
    };
 
    selectScreen = navigatorType => {
-      return () => {
-         this.setState({
-            navigatorType: navigatorType,
-         });
-      };
+      this.setState({
+         navigatorType: navigatorType,
+      });
    };
 
    exitViro = () => {

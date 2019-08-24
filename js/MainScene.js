@@ -25,7 +25,7 @@ let winScreen = require('./youWin.js');
 export default class MainScene extends Component {
   constructor(props) {
     super(props);
-    this.state = { time: 550 };
+    this.state = { time: 120 };
     this.interval = null;
   }
   componentWillUnmount() {
@@ -133,11 +133,7 @@ export default class MainScene extends Component {
       <ViroARScene>
         <ViroAmbientLight color="#ffffff" intensity={200} />
 
-        <ViroPortalScene
-          passable={true}
-          dragType="FixedDistance"
-          onDrag={() => {}}
-        >
+        <ViroPortalScene passable={true}>
           <ViroPortal position={[0, 0, -2]} scale={[0.8, 0.8, 0.8]}>
             <Viro3DObject
               source={require('./ARPortals/portal_res/portal_archway/portal_archway.vrx')}

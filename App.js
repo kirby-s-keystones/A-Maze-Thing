@@ -16,6 +16,10 @@ import {
   PixelRatio,
   TouchableHighlight,
   Image,
+  Linking,
+  TextInput,
+  ImageBackground,
+  Dimensions,
 } from 'react-native';
 
 import { secret } from './secrets.js';
@@ -33,6 +37,7 @@ let InitialARScene = require('./js/MainScene.js');
 
 let UNSET = 'UNSET';
 let AR_NAVIGATOR_TYPE = 'AR';
+let FIND_MAZE = 'FIND_MAZE';
 let defaultNavigatorType = UNSET;
 
 export default class App extends Component {
@@ -46,6 +51,9 @@ export default class App extends Component {
       totalCoins: 0,
       won: false,
       maze: [],
+      searchQuery: '',
+      mazes: [],
+      filteredMazes: [],
     };
   }
 
@@ -60,6 +68,8 @@ export default class App extends Component {
       return this.getHomeScreen();
     } else if (this.state.navigatorType == AR_NAVIGATOR_TYPE) {
       return this.renderAR();
+    } else if (this.state.navigatorType == FIND_MAZE) {
+      return this.renderFind();
     }
   }
   getTotalCoins = arr => {
@@ -77,15 +87,26 @@ export default class App extends Component {
   getHomeScreen = () => {
     return (
       <View style={localStyles.outer}>
+        <Image
+          source={require('./assets/bg-750x1334.png')}
+          resizeMode="contain"
+          style={{
+            flex: 1,
+            width: viewportWidth,
+            height: viewportHeight,
+            position: 'absolute',
+          }}
+        />
+        <View style={localStyles.blackbg} />
+
         <View style={localStyles.inner}>
-          {/* <Text style={localStyles.titleText}>A Maze Thing</Text> */}
           <Image
             source={require('./assets/logo_sm.png')}
             style={localStyles.logo}
           />
           <TouchableHighlight
             style={localStyles.buttons}
-            onPress={this.selectScreen(AR_NAVIGATOR_TYPE)}
+            onPress={() => this.selectScreen(AR_NAVIGATOR_TYPE)}
             underlayColor={'#3b38ff'}
           >
             <Text style={localStyles.buttonText}>Random Maze</Text>
@@ -93,11 +114,78 @@ export default class App extends Component {
 
           <TouchableHighlight
             style={localStyles.buttons}
-            onPress={() => {}}
+            onPress={() =>
+              Linking.openURL('https://powerful-headland-69931.herokuapp.com/')
+            }
             underlayColor={'#3b38ff'}
           >
-            <Text style={localStyles.buttonText}>Create a Maze</Text>
+            <Text style={localStyles.buttonText}>Create Maze</Text>
           </TouchableHighlight>
+          <TouchableHighlight
+            style={localStyles.buttons}
+            onPress={() => this.selectScreen(FIND_MAZE)}
+            underlayColor={'#3b38ff'}
+          >
+            <Text style={localStyles.buttonText}>Find Maze</Text>
+          </TouchableHighlight>
+        </View>
+      </View>
+    );
+  };
+
+  renderFind = () => {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: 'black',
+          padding: 10,
+        }}
+      >
+        <TouchableHighlight onPress={this.exitViro}>
+          <Image
+            source={require('./assets/home.png')}
+            style={{ height: 40, width: 40, opacity: 0.5 }}
+          />
+        </TouchableHighlight>
+        <View style={localStyles.inner}>
+          <Text style={localStyles.subTitle}>Maze Finder</Text>
+          <TextInput
+            style={localStyles.inputBox}
+            onChangeText={searchQuery => this.setState({ searchQuery })}
+            value={this.state.searchQuery}
+          />
+          <TouchableHighlight
+            style={localStyles.buttons}
+            onPress={() => this.getMatchingMazes(this.state.searchQuery)}
+            underlayColor={'#68a0ff'}
+          >
+            <Text style={localStyles.buttonText}>Find</Text>
+          </TouchableHighlight>
+          {this.state.filteredMazes.map(maze => {
+            return (
+              <View
+                key={maze.name}
+                style={{ flex: 1, flexDirection: 'column' }}
+              >
+                <View>
+                  <Text style={localStyles.buttonText}>{maze.name}</Text>
+                </View>
+                <View>
+                  <TouchableHighlight
+                    style={localStyles.buttons}
+                    onPress={() => {
+                      this.setMaze(maze);
+                      this.selectScreen(AR_NAVIGATOR_TYPE);
+                    }}
+                    underlayColor={'#68a0ff'}
+                  >
+                    <Text style={localStyles.buttonText}>Select</Text>
+                  </TouchableHighlight>
+                </View>
+              </View>
+            );
+          })}
         </View>
       </View>
     );
@@ -130,7 +218,6 @@ export default class App extends Component {
             position: 'absolute',
             zIndex: 2,
             padding: 10,
-            justifyContent: 'space-between',
             width: '100%',
           }}
         >
@@ -146,6 +233,16 @@ export default class App extends Component {
         </View>
       </View>
     );
+  };
+  setMaze = ({ maze }) => {
+    const totalCoins = this.getTotalCoins(maze);
+    this.setState({ maze, totalCoins });
+  };
+  getMatchingMazes = query => {
+    const filteredMazes = this.state.mazes.filter(({ name }) =>
+      name.match(query)
+    );
+    this.setState({ filteredMazes });
   };
   win = () => {
     this.setState({ won: true });
@@ -163,6 +260,7 @@ export default class App extends Component {
       this.setState({
         maze: data[randMaze].maze,
         totalCoins,
+        mazes: data,
       });
     } catch (err) {
       console.error(err);
@@ -182,11 +280,9 @@ export default class App extends Component {
   };
 
   selectScreen = navigatorType => {
-    return () => {
-      this.setState({
-        navigatorType: navigatorType,
-      });
-    };
+    this.setState({
+      navigatorType: navigatorType,
+    });
   };
 
   exitViro = () => {
@@ -199,6 +295,10 @@ export default class App extends Component {
     });
   };
 }
+
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get(
+  'window'
+);
 
 let localStyles = StyleSheet.create({
   container: {
@@ -217,13 +317,19 @@ let localStyles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'black',
   },
+  blackbg: {
+    position: 'absolute',
+    backgroundColor: 'black',
+    opacity: 0.5,
+    height: viewportHeight,
+    width: viewportWidth,
+  },
   inner: {
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: 'black',
+    backgroundColor: 'transparent',
   },
-  logo: {},
   titleText: {
     paddingTop: 30,
     paddingBottom: 20,
@@ -231,17 +337,28 @@ let localStyles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 25,
   },
+  subTitle: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 18,
+    textAlignVertical: 'center',
+    letterSpacing: 3,
+    textTransform: 'uppercase',
+    marginBottom: 20,
+    marginTop: 30,
+  },
   buttonText: {
     color: '#fff',
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 16,
     textAlignVertical: 'center',
-    letterSpacing: 2,
+    letterSpacing: 3,
+    textTransform: 'uppercase',
   },
   buttons: {
     height: 80,
     width: 220,
-    paddingTop: 25,
+    paddingTop: 30,
     marginTop: 30,
     marginBottom: 20,
     backgroundColor: '#3734eb',
@@ -254,22 +371,18 @@ let localStyles = StyleSheet.create({
     textAlign: 'right',
     fontSize: 16,
     marginBottom: 15,
+    width: '88%',
+  },
+  inputBox: {
+    height: 60,
+    borderColor: 'gray',
+    borderWidth: 1,
+    color: 'white',
+    width: 220,
+    borderRadius: 10,
+    fontSize: 16,
+    padding: 10,
   },
 });
 
 module.exports = App;
-
-// import HomeScreen from './Views/HomeScreen';
-// import { ViroARSceneNavigator } from 'react-viro';
-// import { createStackNavigator, createAppContainer } from 'react-navigation';
-
-// const MainNavigator = createStackNavigator({
-//   Home: { screen: HomeScreen },
-//   Viro: { screen: ViroARSceneNavigator },
-// });
-
-// const App = createAppContainer(MainNavigator);
-
-// export default App;
-
-// module.exports = App;

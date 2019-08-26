@@ -87,7 +87,6 @@ export default class MainScene extends Component {
                 require('./res/object_cube/cube_diffuse.png'),
                 require('./res/object_cube/cube_specular.png'),
               ]}
-              materials="hedge"
               scale={[1.0, 1.0, 1.0]}
               position={position}
               type="VRX"

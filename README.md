@@ -8,10 +8,10 @@ In this cross-platform Augmented Reality application, players navigate a maze to
 <img src="./assets/collect-coin_sm.gif">
 
 <h3>Maze Creation</h3>
-<img src="./assets/create-maze.gif">
+<img src="./assets/create-maze.gif" width="400">
 
 <h3>Find Maze</h3>
-<img src="./assets/find-maze_sm.gif">
+<img src="./assets/find-maze.gif" width="400">
 
 ### Prerequisites & Installing
 

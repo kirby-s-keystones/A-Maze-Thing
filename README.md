@@ -2,6 +2,17 @@
 
 In this cross-platform Augmented Reality application, players navigate a maze to collect coins in a race against time. Players can also build their own maze to challenge friends and search for user-built mazes.
 
+# Features
+
+<h3>Coin Collection</h3>
+<img src="./assets/collect-coin_sm.gif">
+
+<h3>Maze Creation</h3>
+<img src="./assets/create-maze.gif" width="400">
+
+<h3>Find Maze</h3>
+<img src="./assets/find-maze.gif" width="400">
+
 ### Prerequisites & Installing
 
 ```

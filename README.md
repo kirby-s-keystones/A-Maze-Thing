@@ -1,36 +1,36 @@
 # A Maze Thing
 
-AR maze
+In this cross-platform Augmented Reality application, players navigate a maze to collect coins in a race against time. Players can also build their own maze to challenge friends and search for user-built mazes.
 
-MVP
+### Prerequisites & Installing
 
--
+```
+npm install
+```
 
-Tier 1
+Install the Viro Media app on ios/android. Sign up for an API key from viromedia.com. Install ngrok (https://ngrok.com/) and follow the steps to start.
 
-- Render a maze that a user can walk through.
-- Splash page
-- Home page
+In your terminal run:
 
-Tier 2
+```
+npm start
+```
+Enter your ngrok endpoint in the Viro Media app to launch.
 
-- Make exit for the maze
-- Collision logic: user is unable to walk through walls
-- Randomly generate a new maze
+## Built With
 
-Tier 3
+* [React Native](https://facebook.github.io/react-native/) - Framework for Android and ios
+* [Node.js](https://nodejs.org/en/) - JavaScript Runtime
+* [Viro](https://viromedia.com/) - AR/VR Library
+* [Axios](https://www.npmjs.com/package/axios) - HTTP client
 
-- Mazes have obstacles, coins to collect
-- Time limit to complete the maze
+## Authors
 
-Tier 4
+* **Kevin Lin** - *Developer*
+* **Alex Yi** - *Developer*
+* **Edward Lee** - *Developer*
+* **Alana "Ani" Kerr** - *Developer*
 
-- Mazes in different physical locations (i.e. Central Park)
-- Image recognition of NYC park logo opens a maze portal
-- Map of maze loacations
-- User geolocation
+## Acknowledgments
 
-If we have time:
-
-- User created mazes: Maze Maker
-- Users can share and save mazes
+* Thank you to our Fullstack instructors and fellows.

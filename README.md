@@ -47,12 +47,15 @@ npm start
 ```
 
 In the ViroMedia application on your mobile device click the hamburger menu on the top left:
+<br/>
 <img src="./assets/hamburger.gif" width="400" />
 
 Click enter testbed:
+<br/>
 <img src="./assets/testbed.jpg" width="400" />
 
 Enter your ngrok endpoint, located in your terminal:
+<br/>
 <img src="./assets/ngrok.png" width="400" />
 
 Enjoy!
